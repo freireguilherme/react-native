@@ -1,7 +1,10 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { KeyboardAvoidingView, Text, Platform, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native'
 
+import api from '../services/api'
+
 import logo from '../assets/logo.png';
+
 
 const styles = StyleSheet.create({
     container: {
@@ -38,7 +41,17 @@ const styles = StyleSheet.create({
     }
 });
 
-export default function Login(){
+export default function Login( {navigation} ){
+    const [user, setUser] = useState('');
+   async function handleLogin(){
+        const response = await api.get('/devs/', {username: user} )
+        
+        const { _id } = response.data;
+
+        console.log(_id);
+        navigation.navigate('Main', {_id});
+    }
+
     return( 
         <KeyboardAvoidingView 
         behavior='padding'
@@ -51,8 +64,10 @@ export default function Login(){
                 placeholder="Digite seu user do Git"
                 style={styles.input}
                 placeholderTextColor= "#999"
+                value={user}
+                onChangeText={setUser}
             />
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity onPress={handleLogin} style={styles.button}>
                 <Text style={styles.buttonText}>Enviar</Text>
             </TouchableOpacity>
         </KeyboardAvoidingView>
